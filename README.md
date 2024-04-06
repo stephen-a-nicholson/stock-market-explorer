@@ -15,7 +15,7 @@ Real-time stock market data analysis and visualisation using Python and financia
 
 1. Clone the repository:
    ```
-   git clone https://github.com/stephen-a-nicholson/stock-market-analyzer.git
+   git clone https://github.com/stephen-a-nicholson/stock-market-explorer.git
    ```
 
 2. Install the required dependencies:
@@ -53,4 +53,4 @@ This project is licensed under the [MIT Licence](LICENCE).
 
 ## Contact
 
-For any questions or inquiries, please contact [Stephen Nicholson] at [stephen.a.nicholson@example.com].
+For any questions or inquiries, please contact [Stephen Nicholson] at [stephen.nicholson1@hotmail.co.uk].
