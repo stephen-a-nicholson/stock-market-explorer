@@ -22,6 +22,7 @@ import streamlit as st
 from bokeh.models import ColumnDataSource, HoverTool
 from bokeh.palettes import Viridis
 from bokeh.plotting import figure
+from bokeh.transform import factor_cmap
 from stock_market_explorer.exceptions import (
     StockDataFetchError,
     StockDataParseError,
@@ -142,6 +143,9 @@ class StockMarketApp:
             # Line chart of closing prices
             st.subheader("Closing Prices")
             st.line_chart(closing_prices)
+            st.write(
+                "This line chart displays the closing prices of the stock over time."
+            )
 
             # Candlestick chart
             open_prices = [data_point["Open"] for data_point in data.values()]
@@ -157,6 +161,9 @@ class StockMarketApp:
             }
 
             st.subheader("Candlestick Chart")
+            st.write(
+                "Explore the candlestick chart to analyze price movements and patterns."
+            )
             candlestick_chart = self.create_candlestick_chart(candlestick_data)
             streamlit_bokeh_events(
                 candlestick_chart,
@@ -170,6 +177,9 @@ class StockMarketApp:
             ]
 
             st.subheader("Volume")
+            st.write(
+                "This bar chart represents the trading volume of the stock."
+            )
             st.bar_chart(volumes)
 
             st.subheader("Raw Data")
@@ -191,9 +201,14 @@ class StockMarketApp:
             x_axis_type="datetime",
             width=1200,
             height=600,
-            title="Candlestick Chart",
+            title=f"Candlestick Chart for {self.symbol}",
+            tools="pan,wheel_zoom,box_zoom,reset,save",
         )
+        p.title.text_font_size = "20pt"
+        p.title.align = "center"
         p.grid.grid_line_alpha = 0.3
+        p.xaxis.axis_label = "Date"
+        p.yaxis.axis_label = "Price"
 
         p.segment(
             x0="Date",
@@ -202,6 +217,7 @@ class StockMarketApp:
             y1="Low",
             source=source,
             color="black",
+            line_width=1,
         )
         p.vbar(
             x="Date",
@@ -209,19 +225,22 @@ class StockMarketApp:
             top="Open",
             bottom="Close",
             source=source,
-            fill_color=Viridis[6][1],
+            fill_color=factor_cmap(
+                "Open", palette=Viridis[6], factors=data["Open"]
+            ),
             line_color="black",
         )
 
         hover = HoverTool(
             tooltips=[
                 ("Date", "@Date{%F}"),
-                ("Open", "$@Open"),
-                ("High", "$@High"),
-                ("Low", "$@Low"),
-                ("Close", "$@Close"),
+                ("Open", "$@Open{0.2f}"),
+                ("High", "$@High{0.2f}"),
+                ("Low", "$@Low{0.2f}"),
+                ("Close", "$@Close{0.2f}"),
             ],
             formatters={"@Date": "datetime"},
+            mode="vline",
         )
         p.add_tools(hover)
 
