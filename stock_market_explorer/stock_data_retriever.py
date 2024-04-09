@@ -1,94 +1,103 @@
 """
-This module contains functions to fetch and process stock market data.
+Module for retrieving and processing stock market data from the Alpha Vantage API.
 
-The `fetch_stock_data` function retrieves stock market data for a given stock 
-symbol from the Alpha Vantage API. It requires an API key for the Alpha Vantage service.
-
-The `process_stock_data` function processes the retrieved stock market data. 
-The exact processing steps are not defined in this excerpt.
-
-Both functions are designed to work with data in dictionary format.
+This module provides functions to fetch stock data from the Alpha Vantage API and process
+the retrieved data into a Pandas DataFrame for further analysis and visualization.
 """
 
 import json
-import logging
+from datetime import datetime
 
+import pandas as pd
 import requests
 
-logging.basicConfig(filename="stock_data.log", level=logging.INFO)
+from stock_market_explorer.exceptions import (
+    StockDataFetchError,
+    StockDataParseError,
+)
 
 
-def fetch_stock_data(symbol: str, api_key: str) -> dict:
+def fetch_stock_data(symbol, api_key, interval="1min", month=None):
     """
-    Fetches stock market data from the Alpha Vantage API.
+    Fetches stock data for a given symbol from Alpha Vantage API.
 
     Args:
-        symbol (str): The stock symbol for which to retrieve data.
-        api_key (str): The Alpha Vantage API key.
+        symbol (str): The stock symbol to fetch data for.
+        api_key (str): The API key for accessing the Alpha Vantage API.
+        interval (str, optional): The time interval for the data. Defaults to "1min".
+        month (str, optional): The specific month to fetch data for. Defaults to None.
 
     Returns:
-        dict: The retrieved stock market data.
+        dict: The fetched stock data in JSON format.
+
+    Raises:
+        StockDataFetchError: If there is an error fetching the stock data.
+        StockDataParseError: If there is an error parsing the JSON response.
+
     """
+    url = "https://www.alphavantage.co/query"
+    params = {
+        "function": "TIME_SERIES_INTRADAY",
+        "symbol": symbol,
+        "interval": interval,
+        "adjusted": "true",
+        "outputsize": "full",
+        "apikey": api_key,
+    }
+
+    if month:
+        params["month"] = month
+
     try:
-        url = "https://www.alphavantage.co/query"
-        params = {
-            "function": "TIME_SERIES_DAILY_ADJUSTED",
-            "symbol": symbol,
-            "apikey": api_key,
-        }
         response = requests.get(url, params=params, timeout=10)
-        if response.status_code == 200:
-            data = json.loads(response.text)
-            return data
-        raise requests.exceptions.RequestException(
-            f"Failed to retrieve data. Status code: {response.status_code}"
-        )
-    except Exception as e:
-        logging.error(
-            "An error occurred while fetching stock data: %s", str(e)
-        )
-        raise
+        response.raise_for_status()
+        data = response.json()
+        return data
+    except requests.exceptions.RequestException as e:
+        raise StockDataFetchError(f"Error fetching stock data: {e}") from e
+    except json.JSONDecodeError as e:
+        raise StockDataParseError(f"Error parsing JSON response: {e}") from e
 
 
-def process_stock_data(data: dict):
+def process_stock_data(data, interval):
     """
-    Processes the retrieved stock market data.
+    Process the retrieved stock market data into a Pandas DataFrame.
 
     Args:
-        data (dict): The retrieved stock market data.
+        data (dict): The retrieved stock market data in JSON format.
+        interval (str): The selected time interval.
 
     Returns:
-        None
+        pandas.DataFrame: The processed stock market data as a Pandas DataFrame.
+
+    Raises:
+        ValueError: If there is an error message in the retrieved data or if the 
+        time series key is missing.
     """
-    try:
-        time_series_data = data["Time Series (Daily)"]
-        for date, daily_data in time_series_data.items():
-            open_price = daily_data["1. open"]
-            high_price = daily_data["2. high"]
-            low_price = daily_data["3. low"]
-            close_price = daily_data["4. close"]
-            adjusted_close = daily_data["5. adjusted close"]
-            volume = daily_data["6. volume"]
-        logging.info("Data processed successfully.")
-    except Exception as e:
-        logging.error(
-            "An error occurred while processing stock data: %s", str(e)
+    if "Error Message" in data:
+        raise ValueError(data["Error Message"])
+
+    time_series_key = f"Time Series ({interval})"
+    if time_series_key not in data:
+        raise ValueError(
+            f"Invalid data format. Missing '{time_series_key}' key."
         )
-        raise
 
+    time_series_data = data[time_series_key]
+    dates = list(time_series_data.keys())
+    dates.reverse()
 
-def main():
-    """
-    The main function that orchestrates the stock market data retrieval and processing.
-    """
-    api_key = "YOUR_API_KEY"
-    symbol = "AAPL"
-    try:
-        data = fetch_stock_data(symbol, api_key)
-        process_stock_data(data)
-    except requests.exceptions.RequestException as e:
-        logging.error("An error occurred: %s", str(e))
+    stock_data = []
+    for date in dates:
+        stock_data.append(
+            {
+                "Date": datetime.strptime(date, "%Y-%m-%d %H:%M:%S"),
+                "Close": float(time_series_data[date]["4. close"]),
+                "Open": float(time_series_data[date]["1. open"]),
+                "High": float(time_series_data[date]["2. high"]),
+                "Low": float(time_series_data[date]["3. low"]),
+                "Volume": int(time_series_data[date]["5. volume"]),
+            }
+        )
 
-
-if __name__ == "__main__":
-    main()
+    return pd.DataFrame(stock_data)

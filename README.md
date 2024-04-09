@@ -1,46 +1,84 @@
-# Real-time Stock Market Data Analysis
+# Stock Market Explorer
 
-Real-time stock market data analysis and visualisation using Python and financial APIs.
+The Stock Market Explorer is a web application that allows users to fetch and visualise stock market data using the Alpha Vantage API. It provides an interactive interface to explore stock prices, volume, and other relevant information.
 
 ## Features
 
-- Real-time stock market data retrieval from the Alpha Vantage API
-- Data preprocessing and cleaning to ensure data quality and consistency
-- Calculation of key metrics, such as daily returns, volatility, and trading volume
-- Identification of trends, patterns, and anomalies in the stock market data
-- Interactive visualisations of stock prices, trends, and key metrics using popular data visualisation libraries
-- Optional notification system to alert users of significant price changes or trading volume spikes
+- Fetch stock market data for a given stock symbol and time interval
+- Display interactive candlestick charts for in-depth price analysis
+- Show line charts of closing prices to track market movements
+- Visualise volume data to gauge market interest
+- Customise time intervals for flexible data exploration
+- Error handling and user-friendly feedback for seamless usage
+
+## Technologies Used
+
+- Python
+- Streamlit
+- Bokeh
+- Alpha Vantage API
+- Pandas
+- Poetry (for dependency management)
 
 ## Installation
 
 1. Clone the repository:
    ```
-   git clone https://github.com/stephen-a-nicholson/stock-market-explorer.git
+   git clone https://github.com/your-username/stock-market-explorer.git
    ```
 
-2. Install the required dependencies:
+2. Navigate to the project directory:
    ```
-   pip install -r requirements.txt
+   cd stock-market-explorer
    ```
 
-3. Obtain an API key from Alpha Vantage and add it to the configuration file.
+3. Install Poetry (if not already installed):
+   ```
+   curl -sSL https://install.python-poetry.org | python3 -
+   ```
+   For more installation options, refer to the [Poetry documentation](https://python-poetry.org/docs/#installation).
+
+4. Install the project dependencies using Poetry:
+   ```
+   poetry install
+   ```
+
+5. Obtain an API key from Alpha Vantage:
+   - Sign up for a free account at [Alpha Vantage](https://www.alphavantage.co/)
+   - Retrieve your API key from the Alpha Vantage dashboard
 
 ## Usage
 
-1. Run the main Python script:
+1. Activate the Poetry virtual environment:
    ```
-   python main.py
+   poetry shell
    ```
 
-2. Follow the prompts to specify the stock(s) or market indices you want to analyse.
+2. Run the Streamlit app:
+   ```
+   streamlit run app.py
+   ```
 
-3. The application will retrieve real-time stock market data, perform analysis, and generate visualisations.
+3. Open your web browser and navigate to the provided URL (usually `http://localhost:8501`).
 
-4. Explore the generated insights, charts, and metrics to gain a better understanding of the stock market trends.
+4. Enter the required information in the sidebar:
+   - Stock symbol: Enter the stock symbol you want to fetch data for (e.g., "AAPL" for Apple Inc.)
+   - Alpha Vantage API key: Paste your Alpha Vantage API key
+   - Interval: Select the desired time interval for the stock data (e.g., "1min", "5min", "15min", "30min", "60min")
+   - Month (optional): Enter the specific month in the format "YYYY-MM" to fetch data for a particular month
+
+5. Click the "Fetch Stock Data" button to retrieve the stock market data.
+
+6. Explore the visualised data:
+   - Candlestick chart: Interact with the candlestick chart to analyse price movements and patterns
+   - Closing prices line chart: Observe the trend of closing prices over time
+   - Volume bar chart: Assess the trading volume of the stock
+
+7. Customise the time interval and month as needed to focus on specific periods.
 
 ## Contributing
 
-Contributions are welcome! If you have any ideas, suggestions, or bug reports, please open an issue or submit a pull request. Make sure to follow the contributing guidelines.
+Contributions are welcome! If you find any bugs, have suggestions for improvements, or want to add new features, please open an issue or submit a pull request.
 
 ## Licence
 
@@ -48,9 +86,7 @@ This project is licensed under the [MIT Licence](LICENCE).
 
 ## Acknowledgements
 
-- [Alpha Vantage](https://www.alphavantage.co/) for providing the real-time stock market data
-- [pandas](https://pandas.pydata.org/), [NumPy](https://numpy.org/), [Matplotlib](https://matplotlib.org/) for their powerful data analysis and visualisation capabilities
-
-## Contact
-
-For any questions or inquiries, please contact [Stephen Nicholson] at [stephen.nicholson1@hotmail.co.uk].
+- [Alpha Vantage](https://www.alphavantage.co/) for providing the stock market data API
+- [Streamlit](https://streamlit.io/) for the awesome web application framework
+- [Bokeh](https://bokeh.org/) for the interactive visualisation library
+- [Poetry](https://python-poetry.org/) for the dependency management and packaging tool

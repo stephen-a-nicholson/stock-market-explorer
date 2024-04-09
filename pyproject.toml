@@ -9,6 +9,9 @@ readme = "README.md"
 python = "^3.12"
 requests = "^2.31.0"
 streamlit = "^1.33.0"
+bokeh = "^3.4.0"
+streamlit-bokeh-events = "^0.1.2"
+watchdog = "^4.0.0"
 
 
 [tool.poetry.group.dev.dependencies]
