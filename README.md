@@ -24,7 +24,7 @@ The Stock Market Explorer is a web application that allows users to fetch and vi
 
 1. Clone the repository:
    ```
-   git clone https://github.com/your-username/stock-market-explorer.git
+   git clone https://github.com/stephen-a-nicholson/stock-market-explorer.git
    ```
 
 2. Navigate to the project directory:
