@@ -4,7 +4,7 @@ The Stock Market Explorer is a web application that allows users to fetch and vi
 
 ## Features
 
-- Fetch stock market data for a given stock symbol and time interval
+- Fetch stock market data using the Alpha Vantage free API for personal, non-commercial use
 - Display interactive candlestick charts for in-depth price analysis
 - Show line charts of closing prices to track market movements
 - Visualise volume data to gauge market interest
@@ -90,3 +90,4 @@ This project is licensed under the [MIT Licence](LICENCE).
 - [Streamlit](https://streamlit.io/) for the awesome web application framework
 - [Bokeh](https://bokeh.org/) for the interactive visualisation library
 - [Poetry](https://python-poetry.org/) for the dependency management and packaging tool
+- This project is for personal, non-commercial use only and complies with the Alpha Vantage terms of service.
